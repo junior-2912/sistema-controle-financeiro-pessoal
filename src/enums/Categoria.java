@@ -7,6 +7,4 @@ public enum Categoria {
     SAUDE,
     SALARIO,
     OUTROS;
-
-    
 }
