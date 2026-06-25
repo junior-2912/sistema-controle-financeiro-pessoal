@@ -1,14 +1,25 @@
 package entities;
 
+import java.security.KeyStore.Entry;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collector;
 
 import enums.Categoria;
+import exceptions.TransacaoInvalidaException;
+import services.Relatorio;
 
 public class GerenciadorFinanceiro {
     private List<Transacao> transacoes = new ArrayList<>();
+    // Map para armazenar os valores por categoria ao inves de criar um método para
+    // isso.
     private Map<Categoria, Double> valorCategoria = new HashMap<>();
 
     public boolean existeId(String id) {
@@ -16,7 +27,16 @@ public class GerenciadorFinanceiro {
         return transacao != null;
     }
 
-    public boolean registrarReceita(Receita receita) {
+    public boolean registrarReceita(String categoria, LocalDate data, double valor, String descricao, String id) {
+        if (valor < 0) {
+            throw new TransacaoInvalidaException("O valor nao pode ser negativo");
+        }
+        if (data.isAfter(LocalDate.now())) {
+            throw new TransacaoInvalidaException("Data invalida!");
+        }
+
+        Receita receita = new Receita(Categoria.valueOf(categoria.toUpperCase()), data, valor, descricao, id);
+
         if (!existeId(receita.getId())) {
             transacoes.add(receita);
             if (!valorCategoria.containsKey(receita.getCategoria())) {
@@ -25,12 +45,24 @@ public class GerenciadorFinanceiro {
                 valorCategoria.put(receita.getCategoria(),
                         valorCategoria.get(receita.getCategoria()) + receita.getValor());
             }
+            Relatorio.exportarRelatorioTransacao(receita);
             return true;
         }
         return false;
     }
 
-    public boolean registrarDespesa(Despesa despesa) {
+    public boolean registrarDespesa(String categoria, LocalDate data, double valor, String descricao, String id) {
+
+        if (valor < 0) {
+            throw new TransacaoInvalidaException("O valor nao pode ser negativo");
+        }
+
+        if (data.isAfter(LocalDate.now())) {
+            throw new TransacaoInvalidaException("Data invalida!");
+        }
+
+        Despesa despesa = new Despesa(Categoria.valueOf(categoria.toUpperCase()), data, valor, descricao, id);
+
         if (!existeId(despesa.getId())) {
             transacoes.add(despesa);
             if (valorCategoria.containsKey(despesa.getCategoria())) {
@@ -39,13 +71,15 @@ public class GerenciadorFinanceiro {
             } else {
                 valorCategoria.put(despesa.getCategoria(), despesa.getValor());
             }
+            Relatorio.exportarRelatorioTransacao(despesa);
             return true;
         }
         return false;
     }
 
     public double totalGasto() {
-        //Filtro pra valores da categoria salario, pois salario nao é um gasto e sim um ganho.
+        // Filtro pra valores da categoria salario, pois salario nao é um gasto e sim um
+        // ganho.
         return transacoes.stream()
                 .filter(t -> t.getCategoria() != Categoria.SALARIO)
                 .map(Transacao::getValor)
@@ -53,7 +87,23 @@ public class GerenciadorFinanceiro {
     }
 
     public double totalCategoria(Categoria categoria) {
-        return valorCategoria.get(categoria);
+        if (valorCategoria.get(categoria) != null)
+            return valorCategoria.get(categoria);
+        return 0.0;
+    }
+
+    public double somarGastos(Categoria[] categorias) {
+        double soma = 0;
+        for (Categoria categoria : categorias) {
+            soma += valorCategoria.get(categoria);
+        }
+        return soma;
+    }
+
+    public List<Map.Entry<Categoria, Double>> categoriasMaisGastos() {
+        return valorCategoria.entrySet().stream()
+                .sorted(Comparator.comparing((Map.Entry<Categoria, Double> entry) -> entry.getValue()).reversed())
+                .limit(3).toList();
     }
 
 }
