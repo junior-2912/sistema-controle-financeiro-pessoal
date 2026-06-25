@@ -64,7 +64,7 @@ public class Main {
                             System.out.print("Digite a data(dd/mm/aaaa): ");
                             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                             LocalDate data = LocalDate.parse(entrada.nextLine(), fmt);
-                            
+
 
                             if (!gf.registrarDespesa(categoria, data, valor, descricao, id)) {
                                 throw new TransacaoInvalidaException("Ja existe uma transacao com esse ID!");
@@ -85,13 +85,13 @@ public class Main {
                             if (categoria.toUpperCase().equals(Categoria.SALARIO)) {
                                 System.out.println("Salario é uma categoria de receita, entao os numeros abaixo sao de ganhos e nao de gastos");
                                 String.format("%.2f",
-                                            gf.totalCategoria(Categoria.valueOf(categoria.toUpperCase())));
+                                        gf.totalCategoria(Categoria.valueOf(categoria.toUpperCase())));
                             } else {
-                            System.out.println(
-                                    "Valor gasto: R$ " + String.format("%.2f", gf.totalCategoria(Categoria.valueOf(categoria.toUpperCase()))));
+                                System.out.println(
+                                        "Valor gasto: R$ " + String.format("%.2f", gf.totalCategoria(Categoria.valueOf(categoria.toUpperCase()))));
                             }
                         }
-                        case 5 ->  {
+                        case 5 -> {
                             System.out.println("De quantas categorias voce quer somar os gastos: ");
                             int nCategorias = entrada.nextInt();
                             entrada.nextLine();
@@ -105,13 +105,10 @@ public class Main {
                         case 6 -> {
                             System.out.println("Top 3 categorias com mais gastos ");
                             System.out.println(gf.categoriasMaisGastos());
-
                         }
                         default -> System.out.println("Valor invalido!");
                     }
-                } catch (DateTimeParseException e) {
-                    System.out.println(e.getMessage());
-                } catch (TransacaoInvalidaException e) {
+                } catch (DateTimeParseException | TransacaoInvalidaException e) {
                     System.out.println(e.getMessage());
                 }
             }
