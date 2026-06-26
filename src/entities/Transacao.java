@@ -6,6 +6,9 @@ import java.time.format.DateTimeFormatter;
 import enums.Categoria;
 
 public class Transacao {
+    /**
+     * Representa uma transação financeira genérica, seja receita ou despesa.
+     */
 
     private Categoria categoria;
     private LocalDate data;

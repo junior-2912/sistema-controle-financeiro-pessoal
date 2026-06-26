@@ -64,7 +64,6 @@ src
 - Interface gráfica
 - Geração de relatórios em PDF
 - Filtros por periodo
-- Documentação do código
 
 ## Objetivo do Projeto
 Projeto desenvolvido como parte da minha jornada dos estudos em Java core.

@@ -12,16 +12,27 @@ import exceptions.TransacaoInvalidaException;
 import services.Relatorio;
 
 public class GerenciadorFinanceiro {
+    /**
+     * Armazena todas as transações registradas no sistema.
+     */
     private List<Transacao> transacoes = new ArrayList<>();
-    // Map para armazenar os valores por categoria ao inves de criar um método para
-    // isso.
+
+    /**
+     * Mantém o somatório acumulado de valores por categoria.
+     */
     private Map<Categoria, Double> valorCategoria = new HashMap<>();
 
+    /**
+     * Verifica se já existe uma transação com o identificador informado.
+     */
     public boolean existeId(String id) {
         Transacao transacao = transacoes.stream().filter(t -> t.getId().equals(id)).findAny().orElse(null);
         return transacao != null;
     }
 
+    /**
+     * Registra uma nova receita e atualiza o total por categoria.
+     */
     public boolean registrarReceita(String categoria, LocalDate data, double valor, String descricao, String id) {
         if (valor < 0) {
             throw new TransacaoInvalidaException("O valor nao pode ser negativo");
@@ -46,6 +57,9 @@ public class GerenciadorFinanceiro {
         return false;
     }
 
+    /**
+     * Registra uma nova despesa e atualiza o total por categoria.
+     */
     public boolean registrarDespesa(String categoria, LocalDate data, double valor, String descricao, String id) {
 
         if (valor < 0) {

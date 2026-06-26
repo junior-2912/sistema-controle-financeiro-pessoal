@@ -10,7 +10,11 @@ import enums.Categoria;
 import exceptions.TransacaoInvalidaException;
 
 public class Main {
-    // Aplicação pra registrar receitas e despesas e gerar relatórios.
+    /**
+     * Ponto de entrada da aplicação.
+     * Apresenta um menu interativo para registrar receitas, despesas e exibir
+     * relatórios.
+     */
     public static void main(String[] args) {
         GerenciadorFinanceiro gf = new GerenciadorFinanceiro();
         try (Scanner entrada = new Scanner(System.in)) {
@@ -65,7 +69,6 @@ public class Main {
                             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                             LocalDate data = LocalDate.parse(entrada.nextLine(), fmt);
 
-
                             if (!gf.registrarDespesa(categoria, data, valor, descricao, id)) {
                                 throw new TransacaoInvalidaException("Ja existe uma transacao com esse ID!");
                             } else {
@@ -80,15 +83,18 @@ public class Main {
                             System.out.println("-Despesas por categoria-");
                             System.out.print("Digite a categoria que será relatada: ");
                             String categoria = entrada.nextLine();
-                            //Apesar do nome da funcao ser despesas por categoria, SALARIO nao é uma despesa, mas sim uma categoria de receita.
-                            //Tratamento para caso a categoria escolhida seja SALARIO.
+                            // Apesar do nome da funcao ser despesas por categoria, SALARIO nao é uma
+                            // despesa, mas sim uma categoria de receita.
+                            // Tratamento para caso a categoria escolhida seja SALARIO.
                             if (categoria.toUpperCase().equals(Categoria.SALARIO)) {
-                                System.out.println("Salario é uma categoria de receita, entao os numeros abaixo sao de ganhos e nao de gastos");
+                                System.out.println(
+                                        "Salario é uma categoria de receita, entao os numeros abaixo sao de ganhos e nao de gastos");
                                 String.format("%.2f",
                                         gf.totalCategoria(Categoria.valueOf(categoria.toUpperCase())));
                             } else {
                                 System.out.println(
-                                        "Valor gasto: R$ " + String.format("%.2f", gf.totalCategoria(Categoria.valueOf(categoria.toUpperCase()))));
+                                        "Valor gasto: R$ " + String.format("%.2f",
+                                                gf.totalCategoria(Categoria.valueOf(categoria.toUpperCase()))));
                             }
                         }
                         case 5 -> {

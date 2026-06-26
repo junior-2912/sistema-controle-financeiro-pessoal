@@ -8,6 +8,9 @@ import entities.Transacao;
 import exceptions.OperacaoArquivoException;
 
 public class Relatorio {
+    /**
+     * Exporta a transação registrada para um arquivo CSV temporário.
+     */
 
     public static void exportarRelatorioTransacao(Transacao transacao) {
         try (BufferedWriter bw = new BufferedWriter(
